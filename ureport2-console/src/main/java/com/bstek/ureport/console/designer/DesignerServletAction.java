@@ -18,21 +18,19 @@ package com.bstek.ureport.console.designer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.bstek.ureport.provider.report.ReportFile;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.codehaus.jackson.map.util.JSONPObject;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 
@@ -187,6 +185,46 @@ public class DesignerServletAction extends RenderPageServletAction {
 	
 	public void loadReportProviders(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		writeObjectToJson(resp, reportProviders);
+	}
+
+	/**
+	 * 查询某个文件详情
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void findReportFile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String file=req.getParameter("file");
+		file=ReportUtils.decodeFileName(file);
+		ReportProvider targetReportProvider=null;
+		for(ReportProvider provider:reportProviders){
+			if(file.startsWith(provider.getPrefix())){
+
+				targetReportProvider=provider;
+				break;
+			}
+		}
+		if(targetReportProvider==null){
+			throw new ReportDesignException("File ["+file+"] not found available report provider.");
+		}
+		List<ReportFile> reportFiles = targetReportProvider.getReportFiles();
+		Iterator<ReportFile> iterator = reportFiles.iterator();
+        String prefix = targetReportProvider.getPrefix();
+		while(iterator.hasNext()){
+			ReportFile reportFile = iterator.next();
+            if (reportFile.getName().indexOf(file.replace(prefix, "")) < 0) {
+                iterator.remove();
+            }
+		}
+        String name = targetReportProvider.getName();
+        Map map = new HashMap();
+        map.put("prefix", prefix);
+        map.put("name", name);
+        map.put("reportFiles", reportFiles);
+        List list = new ArrayList();
+        list.add(map);
+		writeObjectToJson(resp, list);
 	}
 	
 	public void setReportRender(ReportRender reportRender) {
