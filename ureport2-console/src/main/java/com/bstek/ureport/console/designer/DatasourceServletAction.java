@@ -140,18 +140,13 @@ public class DatasourceServletAction extends RenderPageServletAction {
 		try{
 			conn=buildConnection(req);
 			DatabaseMetaData metaData = conn.getMetaData();
-			System.out.println("metaData:"+metaData.toString());
 			String url = metaData.getURL();
-			System.out.println("url:"+url);
 			String schema = null;
 			if (url.toLowerCase().contains("oracle")) {
 				schema = metaData.getUserName();
-				System.out.println("oracle-schema:"+schema);
 			}
-			System.out.println("schema:"+schema);
 			List<Map<String,String>> tables = new ArrayList<Map<String,String>>();
 			rs = metaData.getTables(null, schema, "%", new String[] {"TABLE"});
-			System.out.println("rs:"+rs.toString() + " zzzzzzz:" + rs.next());
 			while (rs.next()) {
 				Map<String,String> table = new HashMap<String,String>();
 				// 为空时，不取注释
@@ -170,7 +165,6 @@ public class DatasourceServletAction extends RenderPageServletAction {
 				table.put("type",rs.getString("TABLE_TYPE"));
 				tables.add(table);
 			}
-			System.out.println("tables:"+tables.toString() + tables.size());
 			writeObjectToJson(resp, tables);
 		}catch(Exception ex){
 			throw new ServletException(ex);
@@ -389,13 +383,11 @@ public class DatasourceServletAction extends RenderPageServletAction {
 	
 	private Connection buildConnection(HttpServletRequest req) throws Exception{
 		String type=req.getParameter("type");
-		System.out.println("type: "+type);
-		if(type.equals("jdbc")){			
+		if(type.equals("jdbc")){
 			String username=req.getParameter("username");
 			String password=req.getParameter("password");
 			String driver=req.getParameter("driver");
 			String url=req.getParameter("url");
-			System.out.println("username: "+username + " password: " + password);
             Properties props = new Properties();
 			Class.forName(driver);
             props.setProperty("user", username);
@@ -405,7 +397,6 @@ public class DatasourceServletAction extends RenderPageServletAction {
 			return conn;
 		}else{
 			String name=req.getParameter("name");
-			System.out.println("name: "+name);
 			Connection conn=Utils.getBuildinConnection(name);
 			if(conn==null){
 				throw new ReportDesignException("Buildin datasource ["+name+"] not exist.");
