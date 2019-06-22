@@ -112,7 +112,37 @@ public class ReportRender implements ApplicationContextAware{
 		}
 		return inputStream;
 	}
-	
+
+	public ReportDefinition parseReportBak(String file){
+		InputStream inputStream=null;
+		try {
+			inputStream=buildReportFileBak(file);
+			ReportDefinition reportDefinition=reportParser.parse(inputStream,file);
+			return reportDefinition;
+		}finally{
+			try {
+				if(inputStream!=null){
+					inputStream.close();
+				}
+			} catch (IOException e) {
+				throw new ReportParseException(e);
+			}
+		}
+	}
+
+	private InputStream buildReportFileBak(String file){
+		InputStream inputStream=null;
+		for(ReportProvider provider:reportProviders){
+			if(file.startsWith(provider.getPrefix())){
+				inputStream=provider.loadReportBak(file);
+			}
+		}
+		if(inputStream==null){
+			throw new ReportException("Report ["+file+"] not support.");
+		}
+		return inputStream;
+	}
+
 	private void addRowChildCell(CellDefinition cell,CellDefinition childCell){
 		CellDefinition leftCell=cell.getLeftParentCell();
 		if(leftCell==null){

@@ -57,4 +57,10 @@ public interface ReportProvider {
 	 * @return 返回报表文件名前缀
 	 */
 	String getPrefix();
+	/**
+	 * 根据备份报表名加载报表文件
+	 * @param file 报表名称
+	 * @return 返回的InputStream
+	 */
+	InputStream loadReportBak(String file);
 }

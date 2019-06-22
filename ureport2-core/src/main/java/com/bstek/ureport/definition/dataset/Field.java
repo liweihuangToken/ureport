@@ -20,17 +20,31 @@ package com.bstek.ureport.definition.dataset;
  * @since 2016年12月30日
  */
 public class Field {
-	private String name;
+	private String name;//字段名
+	private String nameAndRemark;//字段名和注释
 
-	public Field(String name) {
-		this.name=name;
+//	public Field(String name) {
+//		this.name=name;
+//	}
+
+	public Field(String name, String nameAndRemark) {
+		this.name = name;
+		this.nameAndRemark = nameAndRemark;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getNameAndRemark() {
+		return nameAndRemark;
+	}
+
+	public void setNameAndRemark(String nameAndRemark) {
+		this.nameAndRemark = nameAndRemark;
 	}
 }

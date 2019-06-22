@@ -154,4 +154,17 @@ public class FileReportProvider implements ReportProvider,ApplicationContextAwar
 	public String getPrefix() {
 		return prefix;
 	}
+
+	@Override
+	public InputStream loadReportBak(String file) {
+		if(file.startsWith(prefix)){
+			file=file.substring(prefix.length(),file.length());
+		}
+		String fullPath=fileStoreDir+"/"+file;
+		try {
+			return new FileInputStream(fullPath);
+		} catch (FileNotFoundException e) {
+			throw new ReportException(e);
+		}
+	}
 }

@@ -88,4 +88,27 @@ public class ClasspathReportProvider implements ReportProvider,ApplicationContex
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext=applicationContext;
 	}
+
+	@Override
+	public InputStream loadReportBak(String file) {
+		Resource resource=applicationContext.getResource(file);
+		try {
+			return resource.getInputStream();
+		} catch (IOException e) {
+			String newFileName=null;
+			if(file.startsWith("classpath:")){
+				newFileName="classpath*:"+file.substring(10,file.length());
+			}else if(file.startsWith("classpath*:")){
+				newFileName="classpath:"+file.substring(11,file.length());
+			}
+			if(newFileName!=null){
+				try{
+					return applicationContext.getResource(file).getInputStream();
+				}catch(IOException ex){
+					throw new ReportException(e);
+				}
+			}
+			throw new ReportException(e);
+		}
+	}
 }

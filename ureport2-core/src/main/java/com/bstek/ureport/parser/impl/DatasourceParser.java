@@ -122,7 +122,7 @@ public class DatasourceParser implements Parser<DatasourceDefinition> {
 			if(!ele.getName().equals("field")){
 				continue;
 			}
-			Field field=new Field(ele.attributeValue("name"));
+			Field field = new Field(ele.attributeValue("name"), ele.attributeValue("name"));
 			fields.add(field);
 		}
 		return fields;

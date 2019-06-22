@@ -59,7 +59,7 @@ public class ProcedureUtils {
 			List<Field> fields=new ArrayList<Field>();
 			for(int i=1;i<=columnCount;i++){
 				String columnName=metadata.getColumnLabel(i);
-				fields.add(new Field(columnName));
+				fields.add(new Field(columnName, columnName));
 			}
 			return fields;
 		} catch (SQLException e) {
